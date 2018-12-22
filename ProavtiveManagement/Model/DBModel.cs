@@ -1,9 +1,7 @@
-﻿namespace ProavtiveManagement
-{
-    using System;
-    using System.Data.Entity;
-    using System.Linq;
+﻿using System.Data.Entity;
 
+namespace ProavtiveManagement.Model
+{
     public class DBModelContext : DbContext
     {
         public DBModelContext()
@@ -17,5 +15,6 @@
         // public virtual DbSet<MyEntity> MyEntities { get; set; }
         public virtual DbSet<Scenario> ScenarioSet { get; set; }
         public virtual DbSet<ScenarioTrigger> ScenarioTriggerSet { get; set; }
+        public virtual DbSet<TemperatureData> TemperatureDataSet { get; set; }
     }
 }

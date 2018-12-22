@@ -2,17 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.DataVisualization.Charting;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using ProavtiveManagement.Model;
 
 namespace ProavtiveManagement
 {
@@ -23,6 +17,8 @@ namespace ProavtiveManagement
     {
         private DBModelContext _cont;
 
+        private Random rnd = new Random();
+
         public ControlWindow()
         {
             InitializeComponent();
@@ -30,10 +26,15 @@ namespace ProavtiveManagement
             _cont = new DBModelContext();
         }
 
-        private void ContorlWIndow_OnLoaded(object sender, RoutedEventArgs e)
+        private void ControlWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             LoadChart();
-            LoadRecomendations();
+            //LoadRecomendations(Dispatcher);
+
+            //var now = DateTime.Now;
+            //var timer = new Timer(LoadRecomendations, Dispatcher,
+                //now.Subtract(new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0)).Milliseconds*0+10
+                //100,500);
         }
 
         private void LoadChart()
@@ -57,20 +58,64 @@ namespace ProavtiveManagement
 
             ((LineSeries)statisticChart.Series[0]).ItemsSource = list;
         }
-
         private void LoadRecomendations()
         {
-            float val = 0;
-            var recomendations =_cont.ScenarioSet
-                                     .Where(x => x.triggerList
-                                                  .Select(t => t.IsTriggered(val))
-                                                  .All(b => b)).ToList();
+            double val = 0;
+            var recomendations = new List<Scenario>();
 
-            recomendations.Sort((a1, a2) => a2.Priority.CompareTo(a1));
+            var scenarios = _cont.ScenarioSet.ToList();
 
 
+            foreach (var s in scenarios)
+            {
+                bool ok = true;
 
+                foreach (var t in s.triggerList)
+                    ok &= t.IsTriggered(val);
+
+                if (ok)
+                    recomendations.Add(s);
+            }
+
+            recomendations.Sort((a1, a2) => a2.Efficiency.CompareTo(a1.Efficiency));
+
+            UpdateStackPanel(StackPanelRecomendationsByEfficency, recomendations);
+
+            recomendations.Sort((a1, a2) => a2.UseFrequency.CompareTo(a1.UseFrequency));
+
+            UpdateStackPanel(StackPanelRecomendationsByUseFrequency, recomendations);
         }
+
+        private void UpdateStackPanel(StackPanel sp, List<Scenario> list)
+        {
+            sp.Children.Clear();
+
+            foreach (var r in list)
+            {
+                var wp = new WrapPanel();
+                wp.Children.Add(new Label()
+                {
+                    Content = r.ToString(),
+                    Width = 150,
+                    Height = 26,
+                    HorizontalContentAlignment = HorizontalAlignment.Right
+                });
+
+                var label = new Label();
+
+                var button = new Button { Content = "Желаете выполнить этот сценарий?", Width = 202, Height = 26 };
+                button.Click += (b, e) => { Dispatcher.Invoke(() => Button_Click(button, label)); };
+                wp.Children.Add(button);
+                wp.Children.Add(label);
+
+                sp.Children.Add(wp);
+            }
+        }
+
+        private void Button_Click(Button button, Label label)
+        {
+            label.Content = "Выполняется...";
+            button.IsEnabled = false;}
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -84,6 +129,11 @@ namespace ProavtiveManagement
 
             if (c.SelectedIndex > 1)
                 GridFullManagement.IsEnabled = true;
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            LoadRecomendations();
         }
     }
 }

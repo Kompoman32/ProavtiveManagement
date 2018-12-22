@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ProavtiveManagement"
         xmlns:tlk="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         mc:Ignorable="d"
-        Loaded="ContorlWIndow_OnLoaded"
+        Loaded="ControlWindow_OnLoaded"
         Title="Окно Управления" Height="670.247" Width="685.509">
     <Grid>
         <Grid.RowDefinitions>
@@ -18,7 +18,7 @@
         <WrapPanel Grid.Row="0">
             <Label Margin="10" >Права доступа</Label>
             <ComboBox IsEditable="False" Width="130" Height="30" SelectionChanged="ComboBox_SelectionChanged">
-                <ComboBoxItem >0 - Только сбор</ComboBoxItem>
+                <ComboBoxItem>0 - Только сбор</ComboBoxItem>
                 <ComboBoxItem>1 - Рекомендации</ComboBoxItem>
                 <ComboBoxItem>2 - Полный доступ</ComboBoxItem>
             </ComboBox>
@@ -35,10 +35,18 @@
             </tlk:Chart>
         </Grid>
         <Grid Name="GridRecomendation" Row="2" IsEnabled="False">
-            <Label Height="30" VerticalAlignment="Top">Сбор статитсиики + рекомендации системы</Label>
-            <StackPanel Name="StackPanelRecomendations" Margin="0 30 0 0">
-                
-            </StackPanel>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Label Name="lll" Height="30" Width="260" HorizontalAlignment="Left" VerticalAlignment="Top">Сбор статитсиики + рекомендации системы</Label>
+            <Button Grid.Column="1" Height="30" Width="100" HorizontalAlignment="Right" VerticalAlignment="Top" Click="Button_Click_1">Press to Update</Button>
+            <ScrollViewer Grid.Column="0" Margin="0 30 0 0">
+            <StackPanel Name="StackPanelRecomendationsByEfficency"/>
+            </ScrollViewer>
+            <ScrollViewer Grid.Column="0" Margin="0 30 0 0">
+                <StackPanel Name="StackPanelRecomendationsByUseFrequency"/>
+            </ScrollViewer>
         </Grid>
         <Grid Name="GridFullManagement" Row="3" IsEnabled="False">
             <Label Height="30" VerticalAlignment="Top">Управление</Label>
