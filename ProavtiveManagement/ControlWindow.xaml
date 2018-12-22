@@ -1,0 +1,47 @@
+﻿<Window x:Class="ProavtiveManagement.ControlWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProavtiveManagement"
+        xmlns:tlk="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+        mc:Ignorable="d"
+        Loaded="ContorlWIndow_OnLoaded"
+        Title="Окно Управления" Height="670.247" Width="685.509">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="250"/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <WrapPanel Grid.Row="0">
+            <Label Margin="10" >Права доступа</Label>
+            <ComboBox IsEditable="False" Width="130" Height="30" SelectionChanged="ComboBox_SelectionChanged">
+                <ComboBoxItem >0 - Только сбор</ComboBoxItem>
+                <ComboBoxItem>1 - Рекомендации</ComboBoxItem>
+                <ComboBoxItem>2 - Полный доступ</ComboBoxItem>
+            </ComboBox>
+        </WrapPanel>
+        <Grid Name="GridStatistics" Row="1">
+            <Label Height="30" VerticalAlignment="Top">Сбор статитсиики</Label>
+            <tlk:Chart Name="statisticChart" Title="Температура за последний день" Margin="0 30 0 0" 
+                       Canvas.Top="80" Canvas.Left="10" Background="Aquamarine">
+                <tlk:Chart.Series>
+                    <tlk:LineSeries 
+                                    IndependentValueBinding="{Binding Path=Key}"
+                                    DependentValueBinding="{Binding Path=Value}"/>
+                </tlk:Chart.Series>
+            </tlk:Chart>
+        </Grid>
+        <Grid Name="GridRecomendation" Row="2" IsEnabled="False">
+            <Label Height="30" VerticalAlignment="Top">Сбор статитсиики + рекомендации системы</Label>
+            <StackPanel Name="StackPanelRecomendations" Margin="0 30 0 0">
+                
+            </StackPanel>
+        </Grid>
+        <Grid Name="GridFullManagement" Row="3" IsEnabled="False">
+            <Label Height="30" VerticalAlignment="Top">Управление</Label>
+        </Grid>
+    </Grid>
+</Window>
