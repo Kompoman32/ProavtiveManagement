@@ -83,7 +83,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ControlWindow.xaml.cs">
-      <DependentUpon>ContorlWIndow.xaml</DependentUpon>
+      <DependentUpon>ControlWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
