@@ -70,7 +70,7 @@
     <Compile Include="DBModel.cs" />
     <Compile Include="Scenario.cs" />
     <Compile Include="ScenarioTrigger.cs" />
-    <Page Include="ContorlWIndow.xaml">
+    <Page Include="ControlWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -82,7 +82,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ContorlWIndow.xaml.cs">
+    <Compile Include="ControlWindow.xaml.cs">
       <DependentUpon>ContorlWIndow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
