@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.DataVisualization.Charting;
@@ -17,13 +19,35 @@ namespace ProavtiveManagement
     {
         private DBModelContext _cont;
 
-        private Random rnd = new Random();
+        //private Random rnd = new Random();
 
         public ControlWindow()
         {
             InitializeComponent();
 
             _cont = new DBModelContext();
+
+            //TODO убрать это 
+            int count = _cont.ScenarioSet.ToList().Count;
+            if (count == 0 && File.Exists("dbo.TemperatureDatas.data.sql"))
+            {
+                try
+                {
+                    using (SqlConnection conn = new SqlConnection(DBModelContext.GetConnectingString()))
+                    {
+                        conn.Open();
+                        SqlCommand com = new SqlCommand(File.ReadAllText("dbo.TemperatureDatas.data.sql"),conn);
+                        com.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show($"Ошибка:\n{e}");
+                }
+            }
+
+            LoadRecomendations();
+            LoadActions();
         }
 
         private void ControlWindow_OnLoaded(object sender, RoutedEventArgs e)
@@ -119,7 +143,12 @@ namespace ProavtiveManagement
                 var label = new Label();
 
                 var button = new Button { Content = "Желаете выполнить этот сценарий?", Width = 202, Height = 26 };
-                button.Click += (b, e) => { Dispatcher.Invoke(() => Button_Click(button, label)); };
+                button.Click += (b, e) => { Dispatcher.Invoke(() =>
+                {
+                    r.UseFrequency++;
+                    _cont.SaveChanges();
+                    Button_Click(button, label);
+                }); };
                 wp.Children.Add(button);
                 wp.Children.Add(new Label() { Content = efficiency ? $"Эфект. = {r.Efficiency}" : $" Част. = {r.UseFrequency}" });
                 wp.Children.Add(label);
@@ -155,7 +184,8 @@ namespace ProavtiveManagement
         private void Button_Click(Button button, Label label)
         {
             label.Content = "Выполняется...";
-            button.IsEnabled = false;}
+            button.IsEnabled = false;
+        }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

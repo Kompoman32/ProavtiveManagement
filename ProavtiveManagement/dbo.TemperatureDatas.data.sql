@@ -1,4 +1,20 @@
-﻿INSERT INTO [dbo].[TemperatureDatas] ([DateTime], [Value]) VALUES (N'2018-23-12 0:00:00', 25)
+﻿SET IDENTITY_INSERT [dbo].[Scenarios] ON
+INSERT INTO [dbo].[Scenarios] ([Id], [Efficiency], [UseFrequency], [Name], [Description]) VALUES (1, 5, 3, N'Сценарий 1', N'Включить свет в 8:00, включить батареи в 7:00')
+INSERT INTO [dbo].[Scenarios] ([Id], [Efficiency], [UseFrequency], [Name], [Description]) VALUES (2, 4, 6, N'Сценарий 2', N'В 8 утра включать лифты во всем здании, в 16:00 отключать лифты в правом крыле, в 20:00 отключать все лифты')
+INSERT INTO [dbo].[Scenarios] ([Id], [Efficiency], [UseFrequency], [Name], [Description]) VALUES (3, 3, 5, N'Сценарий 3', NULL)
+INSERT INTO [dbo].[Scenarios] ([Id], [Efficiency], [UseFrequency], [Name], [Description]) VALUES (4, 5, 1, N'Сценарий 4', NULL)
+SET IDENTITY_INSERT [dbo].[Scenarios] OFF
+
+SET IDENTITY_INSERT [dbo].[ScenarioTriggers] ON
+INSERT INTO [dbo].[ScenarioTriggers] ([Id], [IndicatorType], [TriggerBottomBound], [TriggerTopBound], [Scenario_Id]) VALUES (1, 0, -6, 2, 1)
+INSERT INTO [dbo].[ScenarioTriggers] ([Id], [IndicatorType], [TriggerBottomBound], [TriggerTopBound], [Scenario_Id]) VALUES (2, 4, -1, 1, 1)
+INSERT INTO [dbo].[ScenarioTriggers] ([Id], [IndicatorType], [TriggerBottomBound], [TriggerTopBound], [Scenario_Id]) VALUES (3, 1, -3, 5, 2)
+INSERT INTO [dbo].[ScenarioTriggers] ([Id], [IndicatorType], [TriggerBottomBound], [TriggerTopBound], [Scenario_Id]) VALUES (4, 2, -2, 5, 2)
+INSERT INTO [dbo].[ScenarioTriggers] ([Id], [IndicatorType], [TriggerBottomBound], [TriggerTopBound], [Scenario_Id]) VALUES (5, 1, -3, 1, 3)
+INSERT INTO [dbo].[ScenarioTriggers] ([Id], [IndicatorType], [TriggerBottomBound], [TriggerTopBound], [Scenario_Id]) VALUES (6, 5, -6, 4, 4)
+SET IDENTITY_INSERT [dbo].[ScenarioTriggers] OFF
+
+INSERT INTO [dbo].[TemperatureDatas] ([DateTime], [Value]) VALUES (N'2018-23-12 0:00:00', 25)
 INSERT INTO [dbo].[TemperatureDatas] ([DateTime], [Value]) VALUES (N'2018-23-12 0:05:00', 25)
 INSERT INTO [dbo].[TemperatureDatas] ([DateTime], [Value]) VALUES (N'2018-23-12 0:10:00', 25)
 INSERT INTO [dbo].[TemperatureDatas] ([DateTime], [Value]) VALUES (N'2018-23-12 0:15:00', 25)
