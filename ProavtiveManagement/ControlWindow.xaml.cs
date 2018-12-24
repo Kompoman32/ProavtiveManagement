@@ -39,22 +39,10 @@ namespace ProavtiveManagement
 
         private void LoadChart()
         {
-            var list = new List<KeyValuePair<DateTime, float>>();
+            var list = new List<KeyValuePair<DateTime, double>>();
 
-            using (StreamReader sr = new StreamReader("График.txt"))
-            {
-                while (!sr.EndOfStream)
-                {
-                    var str = sr.ReadLine().Split('\t');
-
-                    var now = DateTime.Now;
-
-                    list.Add(new KeyValuePair<DateTime, float>(
-                        new DateTime(now.Year, now.Month, now.Day, int.Parse(str[0].Split(':')[0]), int.Parse(str[0].Split(':')[1]), 0),
-                        float.Parse(str[1])
-                    ));
-                }
-            }
+            foreach (var d in _cont.TemperatureDataSet.OrderByDescending(data => data.DateTime))
+                list.Add(new KeyValuePair<DateTime, double>(d.DateTime,d.Value));
 
             ((LineSeries)statisticChart.Series[0]).ItemsSource = list;
         }
@@ -79,14 +67,41 @@ namespace ProavtiveManagement
 
             recomendations.Sort((a1, a2) => a2.Efficiency.CompareTo(a1.Efficiency));
 
-            UpdateStackPanel(StackPanelRecomendationsByEfficency, recomendations);
+            UpdateStackPanelRecomendations(StackPanelRecomendationsByEfficency, recomendations, true);
 
             recomendations.Sort((a1, a2) => a2.UseFrequency.CompareTo(a1.UseFrequency));
 
-            UpdateStackPanel(StackPanelRecomendationsByUseFrequency, recomendations);
+            UpdateStackPanelRecomendations(StackPanelRecomendationsByUseFrequency, recomendations, false);
+        }
+        private void LoadActions()
+        {
+            double val = 0;
+            var recomendations = new List<Scenario>();
+
+            var scenarios = _cont.ScenarioSet.ToList();
+
+
+            foreach (var s in scenarios)
+            {
+                bool ok = true;
+
+                foreach (var t in s.triggerList)
+                    ok &= t.IsTriggered(val);
+
+                if (ok)
+                    recomendations.Add(s);
+            }
+
+            recomendations.Sort((a1, a2) => a2.Efficiency.CompareTo(a1.Efficiency));
+
+            UpdateStackPanelActions(StackPanelActionsByEfficency, recomendations, true);
+
+            recomendations.Sort((a1, a2) => a2.UseFrequency.CompareTo(a1.UseFrequency));
+
+            UpdateStackPanelActions(StackPanelActionsByUseFrequency, recomendations, false);
         }
 
-        private void UpdateStackPanel(StackPanel sp, List<Scenario> list)
+        private void UpdateStackPanelRecomendations(StackPanel sp, List<Scenario> list, bool efficiency)
         {
             sp.Children.Clear();
 
@@ -106,10 +121,35 @@ namespace ProavtiveManagement
                 var button = new Button { Content = "Желаете выполнить этот сценарий?", Width = 202, Height = 26 };
                 button.Click += (b, e) => { Dispatcher.Invoke(() => Button_Click(button, label)); };
                 wp.Children.Add(button);
+                wp.Children.Add(new Label() { Content = efficiency ? $"Эфект. = {r.Efficiency}" : $" Част. = {r.UseFrequency}" });
                 wp.Children.Add(label);
 
                 sp.Children.Add(wp);
             }
+        }
+        private void UpdateStackPanelActions(StackPanel sp, List<Scenario> list, bool efficiency)
+        {
+            sp.Children.Clear();
+
+            foreach (var r in list)
+            {
+                var wp = new WrapPanel();
+                wp.Children.Add(new Label()
+                {
+                    Content = r.ToString(),
+                    Width = 150,
+                    Height = 26,
+                    HorizontalContentAlignment = HorizontalAlignment.Right
+                });
+
+                wp.Children.Add(new Label(){Content = efficiency?$"Эфект. = {r.Efficiency}": $" Част. = {r.UseFrequency}" });
+                wp.Children.Add(new Label());
+
+                sp.Children.Add(wp);
+            }
+
+           if (sp.Children.Count>0)
+                ((sp.Children[0] as WrapPanel).Children[2] as Label).Content = "Выполняется...";
         }
 
         private void Button_Click(Button button, Label label)
@@ -132,8 +172,13 @@ namespace ProavtiveManagement
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
+        { 
             LoadRecomendations();
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            LoadActions();
         }
     }
 }
